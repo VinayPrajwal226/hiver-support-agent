@@ -461,13 +461,6 @@ Install the dependencies:
 pip install -r requirements.txt
 
 
-## Step 13 — Decision Log
-
-Now we need to satisfy the assignment's requirement for **10–15 non-obvious decision log entries**.
-
-Add this after the Reproduction section:
-
-```markdown
 ## 10. Decision Log
 
 | Decision | Why I made it |
@@ -487,72 +480,3 @@ Add this after the Reproduction section:
 | Evaluated reply quality only on auto-handled cases | Escalated cases do not necessarily require an automated customer-facing response. |
 | Added explicit safety constraints to generation | Historical support conversations can contain specific links, identifiers, or claims that should not be blindly reproduced. |
 | Chose conservative handling of weak evidence | Unsupported automated support responses can be more damaging than sending an uncertain case to a human. |
-
-## 11. Limitations
-
-This prototype has several important limitations.
-
-### Limited Golden Set
-
-The main evaluation contains 250 manually labelled examples. Although this is sufficient for an initial evaluation, some intents have very few examples.
-
-For example, `cancel_order` has only 2 examples and `product_issue` has only 3.
-
-Therefore, per-class metrics for low-frequency intents should not be treated as stable estimates of production performance.
-
-### Imbalanced Escalation Labels
-
-The golden set contains 231 escalation examples and only 19 non-escalation examples.
-
-As a result, escalation accuracy is not a useful standalone measure. Precision, recall, and macro F1 provide a better view of this component.
-
-### Retrieval Limitations
-
-The current retriever is based on TF-IDF rather than dense semantic embeddings.
-
-This makes it sensitive to vocabulary overlap and can retrieve interactions that share words but have different underlying support situations.
-
-### Conversation Context
-
-The current system primarily retrieves based on the customer message.
-
-Twitter support conversations are often multi-turn, and short messages can depend heavily on previous customer and Amazon messages.
-
-This can make intent classification and retrieval difficult for context-dependent messages.
-
-### Weakly Labelled Training Data
-
-The TF-IDF classification baseline is trained using keyword/rule-based weak labels rather than a fully human-labelled training set.
-
-Therefore, its performance should not be interpreted as the performance of a classifier trained on high-quality supervised labels.
-
-### LLM Judge Limitations
-
-The reply and evidence evaluations use an LLM judge.
-
-LLM judges can disagree with human evaluators and may prefer fluent or generic responses even when the underlying evidence is insufficient.
-
-For this reason, I included a 50-example human evidence audit and measured human/LLM agreement rather than treating the LLM judge as ground truth.
-
-### Prototype-Level Escalation
-
-The escalation component is not yet optimized around a production cost model.
-
-In a real support system, false auto-handling and unnecessary escalation would have different business costs. Those costs should be explicitly defined before optimizing the decision threshold.
-
-### No Live Customer Data or Account Actions
-
-The agent does not access customer accounts, order systems, payment systems, or internal Amazon tools.
-
-It only uses the provided historical Twitter support data and retrieved historical interactions.
-
-Therefore, it should not be considered a production-ready support agent. It is an evaluated prototype demonstrating evidence-grounded support reasoning.
-
-## 12. References
-
-- Customer Support on Twitter dataset: ThoughtVector / Kaggle
-- Google Gemini API documentation
-- scikit-learn documentation for TF-IDF and logistic regression
-- pandas documentation for data processing
-
-The project does not copy historical support responses verbatim into generated answers. Historical interactions are used as retrieval evidence for the prototype.
